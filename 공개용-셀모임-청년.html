@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="짱서진셀2기">
+<meta name="format-detection" content="telephone=no">
+<title>짱서진셀 2기</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font-family:'Apple SD Gothic Neo',sans-serif;
+  background:#f7f3ee;color:#2d2540;
+  -webkit-text-size-adjust:100%;
+  -webkit-tap-highlight-color:transparent;
+  -webkit-touch-callout:none;
+  -webkit-user-select:none;
+}
+#wrap{
+  max-width:640px;margin:0 auto;
+  padding-top:env(safe-area-inset-top);
+  padding-bottom:calc(20px + env(safe-area-inset-bottom));
+  padding-left:env(safe-area-inset-left);
+  padding-right:env(safe-area-inset-right);
+}
+#hdr{
+  background:linear-gradient(135deg,#7c5cbf,#b08fd6);
+  padding:16px 14px 12px;color:#fff;
+  display:-webkit-flex;display:flex;
+  -webkit-justify-content:space-between;justify-content:space-between;
+  -webkit-align-items:flex-start;align-items:flex-start;
+  position:-webkit-sticky;position:sticky;
+  top:0;z-index:200;
+}
+#hdr h1{font-size:18px;font-weight:900}
+#hdr p{font-size:11px;opacity:.8;margin-top:2px}
+.hbtns{display:-webkit-flex;display:flex;-webkit-flex-direction:column;flex-direction:column;gap:4px;-webkit-align-items:flex-end;align-items:flex-end}
+.hbtnrow{display:-webkit-flex;display:flex;gap:4px;-webkit-justify-content:flex-end;justify-content:flex-end}
+.hbtn{
+  background:rgba(255,255,255,.2);
+  border:1px solid rgba(255,255,255,.5);
+  border-radius:7px;padding:5px 9px;
+  color:#fff;font-size:11px;font-weight:700;
+  cursor:pointer;white-space:nowrap;font-family:inherit;
+  -webkit-appearance:none;
+}
+.hbtn.hbtn-new{background:rgba(255,220,100,.35);border-color:rgba(255,220,100,.7)}
+.hbtn.hbtn-edit{background:rgba(100,220,180,.3);border-color:rgba(100,220,180,.6)}
+#tabs{
+  display:-webkit-flex;display:flex;
+  background:#fff;
+  border-bottom:2px solid #e3d9f0;
+  overflow-x:auto;
+  position:-webkit-sticky;position:sticky;
+  top:0;z-index:100;
+  -webkit-overflow-scrolling:touch;
+}
+#tabs::-webkit-scrollbar{display:none}
+.tb{
+  -webkit-flex:0 0 auto;flex:0 0 auto;
+  padding:11px 11px;
+  border:none;background:none;
+  font-size:12px;font-weight:500;color:#8a7fa8;
+  cursor:pointer;
+  border-bottom:3px solid transparent;
+  font-family:inherit;white-space:nowrap;
+  -webkit-appearance:none;
+}
+.tb.on{font-weight:800;color:#7c5cbf;border-bottom-color:#7c5cbf}
+#body{padding:14px}
+.pg{display:none}.pg.on{display:block}
+
+input,textarea,select{
+  border:1.5px solid #e3d9f0;border-radius:8px;
+  padding:8px 10px;font-size:16px;
+  background:#fff;color:#2d2540;outline:none;
+  width:100%;font-family:inherit;
+  -webkit-appearance:none;
+  -webkit-border-radius:8px;
+}
+select{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='7'%3E%3Cpath fill='%238a7fa8' d='M5 7L0 0h10z'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;
+  background-position:right 10px center;
+  padding-right:26px;
+}
+textarea{resize:vertical;-webkit-user-select:text;user-select:text}
+input{-webkit-user-select:text;user-select:text}
+
+.btn{
+  border:none;border-radius:8px;padding:9px 14px;
+  font-weight:700;font-size:14px;cursor:pointer;
+  font-family:inherit;
+  -webkit-appearance:none;
+  touch-action:manipulation;
+}
+.pu{background:#7c5cbf;color:#fff}
+.gr{background:#4caf7d;color:#fff}
+.re{background:#e06c6c;color:#fff}
+.gy{background:#aaa;color:#fff}
+.lt{background:#ede6f7;color:#7c5cbf}
+.sm{padding:4px 9px;font-size:12px;border-radius:6px}
+.row{display:-webkit-flex;display:flex;gap:8px}
+.jbet{display:-webkit-flex;display:flex;-webkit-justify-content:space-between;justify-content:space-between;-webkit-align-items:center;align-items:center}
+
+.card{background:#fffdf9;border-radius:12px;border:1.5px solid #e3d9f0;margin-bottom:12px;overflow:hidden;-webkit-box-shadow:0 2px 6px rgba(201,184,232,.12);box-shadow:0 2px 6px rgba(201,184,232,.12)}
+.chdr{padding:11px 13px;display:-webkit-flex;display:flex;-webkit-justify-content:space-between;justify-content:space-between;-webkit-align-items:center;align-items:center;cursor:pointer;background:#fffdf9;-webkit-user-select:none;user-select:none}
+.chdr.on{background:#f3eef9}
+.cbody{padding:12px 13px;border-top:1px solid #e3d9f0;display:none}
+.cbody.on{display:block}
+
+.sgrid{display:-webkit-flex;display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.sgrid>.sc{-webkit-flex:1 1 calc(33% - 6px);flex:1 1 calc(33% - 6px)}
+.sc{background:#fffdf9;border:1.5px solid #e3d9f0;border-radius:10px;padding:10px 6px;text-align:center}
+.sn{font-size:17px;font-weight:900;color:#7c5cbf}
+.sl{font-size:11px;color:#8a7fa8;margin-top:3px}
+.stit{font-size:13px;font-weight:800;color:#7c5cbf;margin-bottom:10px;padding-bottom:5px;border-bottom:2px solid #e3d9f0}
+.cgrid{display:-webkit-flex;display:flex;flex-wrap:wrap;gap:9px;margin-bottom:14px;-webkit-align-items:flex-start;align-items:flex-start}
+.mchip{-webkit-flex:1 1 calc(25% - 7px);flex:1 1 calc(25% - 7px);background:#fffdf9;border:1.5px solid #e3d9f0;border-radius:10px;padding:12px 6px;text-align:center}
+.cnum{font-size:11px;color:#b08fd6;font-weight:700;margin-bottom:3px}
+.cname{font-size:13px;font-weight:800;color:#2d2540}
+
+.flb{font-size:13px;font-weight:700;color:#8a7fa8;margin-bottom:4px;display:block}
+.frow{display:-webkit-flex;display:flex;gap:7px;margin-bottom:12px;-webkit-align-items:center;align-items:center}
+.cbox{background:#f0faf4;border:1.5px solid #c5e8d4;border-radius:10px;padding:12px;margin-bottom:14px}
+.ctit{font-size:13px;font-weight:800;color:#4caf7d;margin-bottom:9px}
+.mrow{background:#f3eef9;border-radius:10px;padding:11px;margin-bottom:9px;border:1px solid #e3d9f0;position:relative}
+.mrow select{margin-bottom:7px}
+.mrow .msh{margin-bottom:5px}
+.mrow .mpr{background:#ede6f7}
+.rmv{position:absolute;top:7px;right:8px;background:none;border:none;color:#e06c6c;font-size:15px;cursor:pointer;padding:0}
+.mtit{font-size:13px;font-weight:800;color:#7c5cbf;margin-bottom:7px}
+
+.pbar{background:-webkit-linear-gradient(left,#f3eef9,#ede6f7);background:linear-gradient(90deg,#f3eef9,#ede6f7);padding:9px 13px;display:-webkit-flex;display:flex;-webkit-align-items:center;align-items:center;gap:7px}
+.pent{padding:9px 13px}
+.pent+.pent{border-top:1px dashed #e3d9f0}
+.pbub{background:#ede6f7;border-radius:7px;padding:7px 11px;font-size:14px;color:#5a3e8a;line-height:1.6}
+
+.bwrap{margin-bottom:11px}
+.brow{display:-webkit-flex;display:flex;-webkit-justify-content:space-between;justify-content:space-between;margin-bottom:3px;font-size:13px}
+.bbg{background:#eee;border-radius:20px;height:9px;overflow:hidden}
+.bfill{height:100%;border-radius:20px}
+.sbox{background:#fffdf9;border-radius:12px;border:1.5px solid #e3d9f0;padding:13px;margin-bottom:16px}
+.sbtit{font-size:13px;font-weight:800;color:#7c5cbf;margin-bottom:11px}
+.ssub{font-size:13px;font-weight:700;color:#8a7fa8;margin-bottom:9px}
+
+.sub{font-size:12px;color:#8a7fa8}
+.stxt{font-size:14px;margin-bottom:3px}
+.ptxt{font-size:14px;color:#5a3e8a}
+.evbox{background:#e8f5ec;border-radius:7px;padding:7px 11px;font-size:14px;margin-bottom:5px}
+.ntbox{background:#f0f0f0;border-radius:7px;padding:7px 11px;font-size:14px}
+.dvd{border:none;border-top:1px dashed #e3d9f0;margin:7px 0}
+.empty{text-align:center;color:#8a7fa8;margin-top:60px;font-size:14px;line-height:2}
+mark{background:#ffd966;border-radius:3px;padding:0 2px}
+#scnt{color:#8a7fa8;font-size:13px;margin-bottom:9px;display:none}
+
+#ios-share-tip{
+  display:none;
+  position:fixed;bottom:calc(20px + env(safe-area-inset-bottom));
+  left:50%;-webkit-transform:translateX(-50%);transform:translateX(-50%);
+  background:rgba(44,37,64,.92);color:#fff;
+  font-size:13px;border-radius:10px;padding:10px 16px;
+  z-index:999;text-align:center;line-height:1.6;
+  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+  white-space:nowrap;
+}
+
+/* ── 모달 ── */
+#cfg-overlay{
+  display:none;position:fixed;inset:0;
+  background:rgba(44,37,64,.55);
+  z-index:500;
+  -webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);
+  -webkit-align-items:center;align-items:center;
+  -webkit-justify-content:center;justify-content:center;
+  display:none;
+}
+#cfg-overlay.on{display:-webkit-flex;display:flex}
+#cfg-modal{
+  background:#fffdf9;border-radius:16px;
+  border:2px solid #e3d9f0;
+  padding:20px 16px 16px;
+  width:calc(100% - 32px);max-width:420px;
+  max-height:calc(100vh - 80px);
+  overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+  position:relative;
+}
+#cfg-modal h2{font-size:16px;font-weight:900;color:#7c5cbf;margin-bottom:14px}
+.cfg-flb{font-size:13px;font-weight:700;color:#8a7fa8;margin-bottom:4px;display:block}
+.cfg-input{
+  border:1.5px solid #e3d9f0;border-radius:8px;
+  padding:8px 10px;font-size:16px;
+  background:#fff;color:#2d2540;outline:none;
+  width:100%;font-family:inherit;
+  -webkit-appearance:none;
+  margin-bottom:12px;
+  -webkit-user-select:text;user-select:text;
+}
+.cfg-mrow{
+  display:-webkit-flex;display:flex;
+  -webkit-align-items:center;align-items:center;
+  gap:7px;margin-bottom:7px;
+}
+.cfg-mrow input{
+  -webkit-flex:1;flex:1;margin-bottom:0;
+  border:1.5px solid #e3d9f0;border-radius:8px;
+  padding:8px 10px;font-size:16px;
+  background:#fff;color:#2d2540;outline:none;
+  font-family:inherit;
+  -webkit-appearance:none;
+  -webkit-user-select:text;user-select:text;
+}
+.cfg-del{
+  background:none;border:none;
+  color:#e06c6c;font-size:18px;
+  cursor:pointer;padding:0 2px;
+  -webkit-appearance:none;
+  line-height:1;
+}
+#cfg-members-box{margin-bottom:10px}
+</style>
+</head>
+<body>
+<div id="wrap">
+
+<div id="hdr">
+  <div>
+    <h1 id="hdr-title">✝️ 짱서진셀 2기</h1>
+    <p>나눔 · 기도 · 통계 · 검색</p>
+  </div>
+  <div class="hbtns">
+    <!-- 윗줄: 신규 | 내보내기 -->
+    <div class="hbtnrow">
+      <button class="hbtn hbtn-new" onclick="openCfg('new')">🆕 신규</button>
+      <button class="hbtn" id="bexp" onclick="doExport()">📤 내보내기</button>
+    </div>
+    <!-- 아랫줄: 수정 | 가져오기 -->
+    <div class="hbtnrow">
+      <button class="hbtn hbtn-edit" onclick="openCfg('edit')">✏️ 수정</button>
+      <button class="hbtn" id="bimp" onclick="doImport()">📥 가져오기</button>
+    </div>
+  </div>
+</div>
+
+<!-- 신규/수정 모달 -->
+<div id="cfg-overlay">
+  <div id="cfg-modal">
+    <h2 id="cfg-title">🆕 셀 정보 신규 설정</h2>
+
+    <label class="cfg-flb">📌 모임 제목</label>
+    <input class="cfg-input" id="cfg-mtitle" type="text" placeholder="예) 짱서진셀 2기">
+
+    <label class="cfg-flb">✝️ 셀리더 이름</label>
+    <input class="cfg-input" id="cfg-leader" type="text" placeholder="셀리더 이름">
+
+    <label class="cfg-flb" style="margin-bottom:8px">👥 셀원 이름</label>
+    <div id="cfg-members-box"></div>
+    <button class="btn lt" style="width:100%;margin-bottom:16px;font-size:13px" onclick="addCfgMember('')">+ 셀원 추가</button>
+
+    <div class="row">
+      <button class="btn gy" style="-webkit-flex:1;flex:1;font-size:13px" onclick="closeCfg()">취소</button>
+      <button class="btn gr" style="-webkit-flex:2;flex:2;font-size:13px" onclick="saveCfg()">💾 저장</button>
+    </div>
+  </div>
+</div>
+
+<form id="csv-form" style="display:none">
+  <label id="csv-label" for="csv-file"></label>
+  <input type="file" id="csv-file" name="csv-file"
+    accept="text/csv,text/plain,.csv,*/*"
+    onchange="onFileChosen(this)">
+</form>
+
+<div id="ios-share-tip">
+  📤 Safari 공유 버튼(□↑)으로 파일을 저장하거나 공유하세요
+</div>
+
+<div id="tabs">
+  <button class="tb on" data-t="home"   onclick="go('home')">🏠 홈</button>
+  <button class="tb"    data-t="list"   onclick="go('list')">📋 목록</button>
+  <button class="tb"    data-t="write"  onclick="go('write')">✏️ 작성</button>
+  <button class="tb"    data-t="prayer" onclick="go('prayer')">🙏 기도</button>
+  <button class="tb"    data-t="stats"  onclick="go('stats')">📊 통계</button>
+  <button class="tb"    data-t="search" onclick="go('search')">🔍 검색</button>
+</div>
+
+<div id="body">
+
+  <div id="pg-home" class="pg on">
+    <div id="srow" class="sgrid"></div>
+    <div class="stit">👥 셀 구성원</div>
+    <div id="cgrid" class="cgrid"></div>
+  </div>
+
+  <div id="pg-list" class="pg">
+    <div class="jbet" style="margin-bottom:12px">
+      <span id="lcnt" style="color:#8a7fa8;font-size:13px">총 0개 기록</span>
+      <button class="btn pu" onclick="openNew()">+ 새 회의록</button>
+    </div>
+    <div id="lbox"></div>
+  </div>
+
+  <div id="pg-write" class="pg">
+    <div id="ftit" style="font-weight:800;font-size:15px;margin-bottom:12px;color:#7c5cbf">📝 새 회의록 작성</div>
+    <label class="flb">모임 날짜</label>
+    <input type="date" id="fdate" style="margin-bottom:12px">
+    <label class="flb">📍 모임 장소</label>
+    <div class="frow">
+      <select id="fpsel" onchange="onPsel()" style="-webkit-flex:1;flex:1">
+        <option value="">— 장소 선택 —</option>
+        <option value="ETC">직접 입력...</option>
+      </select>
+      <input type="text" id="fptxt" placeholder="장소 직접 입력" style="-webkit-flex:1;flex:1;display:none">
+    </div>
+    <div class="cbox">
+      <div class="ctit">📋 공통 사항</div>
+      <label class="flb">📅 행사 일정</label>
+      <textarea id="fevt" placeholder="다음 행사, 일정 등" rows="2" style="margin-bottom:9px"></textarea>
+      <label class="flb">📝 기타 사항</label>
+      <textarea id="fnote" placeholder="공지사항, 메모 등" rows="2"></textarea>
+    </div>
+    <div class="mtit">👥 참석자별 나눔 &amp; 기도제목</div>
+    <div id="mbox"></div>
+    <button class="btn lt" style="width:100%;margin-bottom:14px" onclick="addMR(null)">+ 참석자 추가</button>
+    <div class="row">
+      <button class="btn gy" style="-webkit-flex:1;flex:1" onclick="go('list')">취소</button>
+      <button class="btn gr" style="-webkit-flex:2;flex:2" onclick="save()">💾 저장</button>
+    </div>
+  </div>
+
+  <div id="pg-prayer" class="pg">
+    <select id="psel" onchange="drawPrayer()" style="width:auto;margin-bottom:12px">
+      <option value="">👥 전체 인원</option>
+    </select>
+    <div id="pbox"></div>
+  </div>
+
+  <div id="pg-stats" class="pg">
+    <label class="flb">📅 월별 참석 통계</label>
+    <select id="smon" onchange="drawMonth()" style="width:auto;margin-bottom:12px"></select>
+    <div id="smbox" class="sbox"></div>
+    <div class="ssub">🏆 전체 참석 순위</div>
+    <div id="stbox" class="sbox"></div>
+  </div>
+
+  <div id="pg-search" class="pg">
+    <input type="text" id="sinput" placeholder="이름, 나눔, 기도제목, 행사 등..." oninput="drawSearch()" style="margin-bottom:11px">
+    <div id="scnt"></div>
+    <div id="sempty" style="text-align:center;color:#8a7fa8;margin-top:50px;font-size:14px;line-height:2">
+      검색어를 입력하면<br>모든 기록에서 찾아드립니다.
+    </div>
+    <div id="sbox"></div>
+  </div>
+
+</div>
+</div>
+
+<script>
+/* ── CONFIG (신규/수정) ── */
+var CFG_KEY = 'jang2_config_v1';
+var DEF_TITLE  = '짱서진셀 2기';
+var DEF_LEADER = '장서진';
+var DEF_MEMBERS= ['오종현','한지석','김단아','김현주','박준호','전하은','조진경','박하영'];
+
+var CFG = null;   // { title, leader, members[] }
+var NAMES = [];   // [리더, 셀원1, 셀원2 ...]
+var PLACES = [];
+var KEY = 'jang2_v1';
+var DB  = [];
+var EID = null;
+
+function loadCfg(){
+  try{
+    var raw = localStorage.getItem(CFG_KEY);
+    CFG = raw ? JSON.parse(raw) : null;
+  }catch(e){ CFG = null; }
+  if(!CFG){
+    CFG = { title: DEF_TITLE, leader: DEF_LEADER, members: DEF_MEMBERS.slice() };
+  }
+  applyConfig();
+}
+function saveCfgData(){
+  try{ localStorage.setItem(CFG_KEY, JSON.stringify(CFG)); }catch(e){ alert('설정 저장 실패: '+e.message); }
+}
+function applyConfig(){
+  // NAMES 재구성: [리더, ...셀원]
+  NAMES = [CFG.leader].concat(CFG.members);
+  // 헤더 타이틀
+  document.getElementById('hdr-title').textContent = '✝️ ' + CFG.title;
+  // PWA 타이틀
+  document.title = CFG.title;
+}
+
+/* ── 모달 열기/닫기 ── */
+var CFG_MODE = 'new'; // 'new' | 'edit'
+
+function openCfg(mode){
+  CFG_MODE = mode;
+  var overlay = document.getElementById('cfg-overlay');
+  var titleEl = document.getElementById('cfg-title');
+
+  if(mode === 'new'){
+    titleEl.textContent = '🆕 셀 정보 신규 설정';
+    document.getElementById('cfg-mtitle').value = '';
+    document.getElementById('cfg-leader').value = '';
+    document.getElementById('cfg-members-box').innerHTML = '';
+    addCfgMember('');
+  } else {
+    titleEl.textContent = '✏️ 셀 정보 수정';
+    document.getElementById('cfg-mtitle').value = CFG.title || '';
+    document.getElementById('cfg-leader').value = CFG.leader || '';
+    var box = document.getElementById('cfg-members-box');
+    box.innerHTML = '';
+    (CFG.members || []).forEach(function(nm){ addCfgMember(nm); });
+  }
+  overlay.classList.add('on');
+}
+function closeCfg(){
+  document.getElementById('cfg-overlay').classList.remove('on');
+}
+function addCfgMember(name){
+  var box = document.getElementById('cfg-members-box');
+  var row = document.createElement('div');
+  row.className = 'cfg-mrow';
+  row.innerHTML =
+    '<input type="text" placeholder="셀원 이름" value="'+xe(name)+'">'
+    +'<button class="cfg-del" onclick="this.parentNode.remove()">✕</button>';
+  box.appendChild(row);
+  // 새로 추가된 input에 focus
+  var inp = row.querySelector('input');
+  if(inp) inp.focus();
+}
+function saveCfg(){
+  var title  = document.getElementById('cfg-mtitle').value.trim();
+  var leader = document.getElementById('cfg-leader').value.trim();
+  if(!title){ alert('모임 제목을 입력해주세요.'); return; }
+  if(!leader){ alert('셀리더 이름을 입력해주세요.'); return; }
+
+  var rows = document.querySelectorAll('#cfg-members-box .cfg-mrow input');
+  var members = [];
+  for(var i=0; i<rows.length; i++){
+    var v = rows[i].value.trim();
+    if(v) members.push(v);
+  }
+  if(!members.length){ alert('셀원을 1명 이상 추가해주세요.'); return; }
+
+  CFG = { title: title, leader: leader, members: members };
+  saveCfgData();
+  applyConfig();
+  closeCfg();
+
+  // 홈 화면 갱신
+  drawHome();
+  alert('✅ 설정이 저장되었습니다.');
+}
+
+/* ── DB ── */
+function load(){ try{ DB=JSON.parse(localStorage.getItem(KEY)||'[]'); }catch(e){ DB=[]; } }
+function save2(){ try{ localStorage.setItem(KEY,JSON.stringify(DB)); }catch(e){ alert('저장 실패: '+e.message); } }
+function uid(){ return Date.now().toString(36)+Math.random().toString(36).substr(2); }
+
+/* ── 유틸 ── */
+function fd(d){
+  if(!d) return '';
+  try{ return new Date(d+'T00:00:00').toLocaleDateString('ko-KR',{year:'numeric',month:'long',day:'numeric',weekday:'short'}); }
+  catch(e){ return d; }
+}
+function ym(d){ return d?d.substr(0,7):''; }
+function fym(s){
+  if(!s) return '';
+  var p=s.split('-');
+  return p[0]+'년 '+parseInt(p[1])+'월';
+}
+function xe(s){
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function hl(t,q){
+  var s=xe(t);
+  if(!q||!q.trim()) return s;
+  var eq=q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+  return s.replace(new RegExp('('+eq+')','gi'),'<mark>$1</mark>');
+}
+function bc(v,m){ var r=m?v/m:0; return r>=0.8?'#4caf7d':r>=0.5?'#7c5cbf':'#b08fd6'; }
+
+/* ── 탭 ── */
+function showPg(t){
+  var ps=document.querySelectorAll('.pg'), bs=document.querySelectorAll('.tb');
+  for(var i=0;i<ps.length;i++) ps[i].classList.remove('on');
+  for(var i=0;i<bs.length;i++) bs[i].classList.remove('on');
+  var p=document.getElementById('pg-'+t), b=document.querySelector('[data-t="'+t+'"]');
+  if(p) p.classList.add('on');
+  if(b) b.classList.add('on');
+}
+function go(t){
+  if(t==='write'){ openNew(); return; }
+  showPg(t);
+  if(t==='home')   drawHome();
+  if(t==='list')   drawList();
+  if(t==='prayer') drawPrayer();
+  if(t==='stats')  drawStats();
+  if(t==='search') drawSearch();
+}
+
+/* ── 홈 ── */
+function drawHome(){
+  var last=DB.length?fd(DB[0].date):'없음';
+  document.getElementById('srow').innerHTML=
+    scard(DB.length+'회','총 모임')+scard(NAMES.length+'명','셀 인원')+scard(last,'최근 모임');
+
+  var h='<div style="background:#f3eef9;border:2px solid #7c5cbf;border-radius:10px;padding:10px 13px;margin-bottom:10px;display:-webkit-flex;display:flex;-webkit-align-items:center;align-items:center;gap:8px;width:100%">'
+    +'<span style="font-size:18px">✝️</span>'
+    +'<div><div style="font-size:11px;color:#7c5cbf;font-weight:700">셀리더</div>'
+    +'<div style="font-size:15px;font-weight:900;color:#2d2540">'+xe(CFG.leader)+'</div></div>'
+    +'</div>';
+  for(var i=1;i<NAMES.length;i++)
+    h+='<div class="mchip"><div class="cnum">'+i+'</div><div class="cname">'+xe(NAMES[i])+'</div></div>';
+  document.getElementById('cgrid').innerHTML=h;
+}
+function scard(v,l){ return '<div class="sc"><div class="sn">'+v+'</div><div class="sl">'+l+'</div></div>'; }
+
+/* ── 목록 ── */
+function drawList(){
+  document.getElementById('lcnt').textContent='총 '+DB.length+'개 기록';
+  var b=document.getElementById('lbox');
+  if(!DB.length){ b.innerHTML='<div class="empty">아직 작성된 회의록이 없어요.<br><span style="font-size:13px">✏️ 작성 탭을 눌러 시작하세요!</span></div>'; return; }
+  b.innerHTML=DB.map(function(m){ return mkCard(m,''); }).join('');
+}
+function mkCard(m,q){
+  var ms=(m.members||[]).map(function(p,i,a){
+    var dv=i<a.length-1?'<hr class="dvd">':'';
+    return '<div>'
+      +'<div style="font-weight:700;color:#7c5cbf;margin-bottom:3px">👤 '+hl(p.name||'이름없음',q)+'</div>'
+      +(p.sharing?'<div class="stxt"><span class="sub">나눔 · </span>'+hl(p.sharing,q)+'</div>':'')
+      +(p.prayer?'<div class="ptxt"><span class="sub">기도 🙏 · </span>'+hl(p.prayer,q)+'</div>':'')
+      +dv+'</div>';
+  }).join('');
+  var ev=m.event?'<div class="evbox"><span style="color:#4caf7d;font-weight:700">📅 </span>'+hl(m.event,q)+'</div>':'';
+  var nt=m.note?'<div class="ntbox"><span style="color:#8a7fa8;font-weight:700">📝 </span>'+hl(m.note,q)+'</div>':'';
+  return '<div class="card">'
+    +'<div class="chdr" onclick="tc(this)">'
+    +'<div>'
+    +'<div style="font-weight:700;font-size:14px;color:#7c5cbf">'+hl(fd(m.date)||'날짜없음',q)
+    +'<span style="margin-left:7px;font-size:12px;color:#8a7fa8">참석 '+(m.members||[]).length+'명</span></div>'
+    +(m.place?'<div style="margin-top:2px;font-size:12px;color:#4caf7d;font-weight:600">📍 '+xe(m.place)+'</div>':'')
+    +'</div>'
+    +'<div style="display:-webkit-flex;display:flex;gap:5px;-webkit-align-items:center;align-items:center">'
+    +'<button class="btn sm" style="background:#b08fd6;color:#fff" onclick="event.stopPropagation();edit(\''+m.id+'\')">수정</button>'
+    +'<button class="btn sm re" onclick="event.stopPropagation();del(\''+m.id+'\')">삭제</button>'
+    +'<span class="ar" style="color:#8a7fa8">▼</span>'
+    +'</div></div>'
+    +'<div class="cbody">'+ms+ev+nt+'</div>'
+    +'</div>';
+}
+function tc(el){
+  var on=el.classList.toggle('on');
+  el.nextElementSibling.classList.toggle('on',on);
+  el.querySelector('.ar').textContent=on?'▲':'▼';
+}
+
+/* ── 폼 ── */
+function onPsel(){
+  var s=document.getElementById('fpsel'), t=document.getElementById('fptxt');
+  if(s.value==='ETC'){ t.style.display='block'; t.focus(); }
+  else{ t.style.display='none'; t.value=''; }
+}
+function getPlace(){
+  var s=document.getElementById('fpsel').value;
+  return s==='ETC'?document.getElementById('fptxt').value.trim():s;
+}
+function openNew(){
+  EID=null;
+  document.getElementById('ftit').textContent='📝 새 회의록 작성';
+  document.getElementById('fdate').value=new Date().toISOString().substr(0,10);
+  document.getElementById('fpsel').value='';
+  document.getElementById('fptxt').value=''; document.getElementById('fptxt').style.display='none';
+  document.getElementById('fevt').value='';
+  document.getElementById('fnote').value='';
+  document.getElementById('mbox').innerHTML='';
+  addMR(null);
+  showPg('write');
+  var b=document.querySelector('[data-t="write"]'); if(b) b.classList.add('on');
+}
+function edit(id){
+  var m=null;
+  for(var i=0;i<DB.length;i++) if(DB[i].id===id){ m=DB[i]; break; }
+  if(!m) return;
+  EID=id;
+  document.getElementById('ftit').textContent='📝 회의록 수정';
+  document.getElementById('fdate').value=m.date||'';
+  document.getElementById('fevt').value=m.event||'';
+  document.getElementById('fnote').value=m.note||'';
+  var sv=m.place||'';
+  var s=document.getElementById('fpsel'), t=document.getElementById('fptxt');
+  if(!sv){ s.value=''; t.style.display='none'; t.value=''; }
+  else if(PLACES.indexOf(sv)>=0){ s.value=sv; t.style.display='none'; t.value=''; }
+  else{ s.value='ETC'; t.style.display='block'; t.value=sv; }
+  var b=document.getElementById('mbox'); b.innerHTML='';
+  (m.members||[]).forEach(function(p){ addMR(p); });
+  showPg('write');
+  var btn=document.querySelector('[data-t="write"]'); if(btn) btn.classList.add('on');
+}
+function mopts(sel){
+  var h='<option value="">— 이름 선택 —</option>';
+  for(var i=0;i<NAMES.length;i++)
+    h+='<option value="'+xe(NAMES[i])+'"'+(sel===NAMES[i]?' selected':'')+'>'+xe(NAMES[i])+'</option>';
+  return h;
+}
+function addMR(d){
+  var b=document.getElementById('mbox'), r=document.createElement('div');
+  r.className='mrow';
+  r.innerHTML='<button class="rmv" onclick="this.parentNode.remove()">✕</button>'
+    +'<select class="mn">'+mopts(d&&d.name?d.name:'')+'</select>'
+    +'<textarea class="msh" placeholder="나눔 내용" rows="2">'+xe(d&&d.sharing?d.sharing:'')+'</textarea>'
+    +'<textarea class="mpr" placeholder="🙏 기도 제목" rows="2">'+xe(d&&d.prayer?d.prayer:'')+'</textarea>';
+  b.appendChild(r);
+}
+function getMems(){
+  var rs=document.querySelectorAll('#mbox .mrow'), out=[];
+  for(var i=0;i<rs.length;i++){
+    var n=rs[i].querySelector('.mn').value.trim();
+    var s=rs[i].querySelector('.msh').value.trim();
+    var p=rs[i].querySelector('.mpr').value.trim();
+    if(n) out.push({name:n,sharing:s,prayer:p});
+  }
+  return out;
+}
+function save(){
+  var ms=getMems();
+  if(!document.getElementById('fdate').value){ alert('날짜를 입력해주세요.'); return; }
+  if(!ms.length){ alert('참석자를 1명 이상 선택해주세요.'); return; }
+  var r={
+    id:EID||uid(),
+    date:document.getElementById('fdate').value,
+    place:getPlace(),
+    members:ms,
+    event:document.getElementById('fevt').value.trim(),
+    note:document.getElementById('fnote').value.trim()
+  };
+  DB=EID?DB.map(function(m){ return m.id===EID?r:m; }):[r].concat(DB);
+  save2(); EID=null; go('list');
+}
+function del(id){
+  if(!confirm('이 회의록을 삭제할까요?')) return;
+  DB=DB.filter(function(m){ return m.id!==id; });
+  save2(); drawList();
+}
+
+/* ── 기도 ── */
+function drawPrayer(){
+  var sel=document.getElementById('psel'), pv=sel.value;
+  var all=[];
+  DB.forEach(function(m){ (m.members||[]).forEach(function(p){ if(p.name&&p.prayer) all.push({date:m.date,name:p.name,prayer:p.prayer}); }); });
+  var ns=[];
+  all.forEach(function(p){ if(ns.indexOf(p.name)<0) ns.push(p.name); });
+  sel.innerHTML='<option value="">👥 전체 인원</option>'
+    +ns.map(function(n){ return '<option value="'+xe(n)+'"'+(pv===n?' selected':'')+'>'+xe(n)+'</option>'; }).join('');
+  var box=document.getElementById('pbox');
+  if(!all.length){ box.innerHTML='<div class="empty">아직 기도제목이 없어요.</div>'; return; }
+  var fi=sel.value?all.filter(function(p){ return p.name===sel.value; }):all;
+  var g={}, ord=[];
+  fi.forEach(function(p){ if(!g[p.name]){ g[p.name]=[]; ord.push(p.name); } g[p.name].push(p); });
+  box.innerHTML=ord.map(function(nm){
+    var li=g[nm].slice().sort(function(a,b){ return b.date.localeCompare(a.date); });
+    return '<div class="card">'
+      +'<div class="pbar"><span style="font-weight:800;font-size:14px;color:#7c5cbf">👤 '+xe(nm)+'</span>'
+      +'<span style="font-size:12px;color:#8a7fa8">'+g[nm].length+'회</span></div>'
+      +li.map(function(p){
+        return '<div class="pent"><div style="font-size:12px;color:#8a7fa8;margin-bottom:3px">📅 '+fd(p.date)+'</div>'
+          +'<div class="pbub">🙏 '+xe(p.prayer)+'</div></div>';
+      }).join('')+'</div>';
+  }).join('');
+}
+
+/* ── 통계 ── */
+function drawStats(){
+  var mons=[];
+  DB.forEach(function(m){ var y=ym(m.date); if(y&&mons.indexOf(y)<0) mons.push(y); });
+  mons.sort(function(a,b){ return b.localeCompare(a); });
+  var sel=document.getElementById('smon');
+  if(!mons.length){
+    document.getElementById('smbox').innerHTML='<div style="color:#8a7fa8;font-size:13px">기록이 없습니다.</div>';
+    document.getElementById('stbox').innerHTML=''; return;
+  }
+  var cv=sel.value;
+  sel.innerHTML=mons.map(function(m){ return '<option value="'+m+'">'+fym(m)+'</option>'; }).join('');
+  if(mons.indexOf(cv)>=0) sel.value=cv;
+  drawMonth(); drawTotal();
+}
+function drawMonth(){
+  var sm=document.getElementById('smon').value; if(!sm) return;
+  var mt=DB.filter(function(m){ return ym(m.date)===sm; });
+  var c={};
+  mt.forEach(function(m){ (m.members||[]).forEach(function(p){ if(p.name) c[p.name]=(c[p.name]||0)+1; }); });
+  var rk=Object.keys(c).map(function(n){ return [n,c[n]]; }).sort(function(a,b){ return b[1]-a[1]; });
+  document.getElementById('smbox').innerHTML='<div class="sbtit">'+fym(sm)+' · 모임 '+mt.length+'회</div>'
+    +(rk.length?rk.map(function(r){ return brow(r[0],r[1],mt.length,mt.length); }).join('')
+    :'<div style="color:#8a7fa8;font-size:13px">이 달 참석 기록이 없습니다.</div>');
+}
+function drawTotal(){
+  var c={};
+  DB.forEach(function(m){ (m.members||[]).forEach(function(p){ if(p.name) c[p.name]=(c[p.name]||0)+1; }); });
+  var rk=Object.keys(c).map(function(n){ return [n,c[n]]; }).sort(function(a,b){ return b[1]-a[1]; });
+  var mx=rk.length?rk[0][1]:1;
+  var md=['🥇','🥈','🥉'];
+  document.getElementById('stbox').innerHTML=rk.length
+    ?rk.map(function(r,i){
+        return '<div class="bwrap"><div class="brow"><span>'+(md[i]||(i+1)+'.')+' '+xe(r[0])+'</span>'
+          +'<span style="color:#8a7fa8">총 '+r[1]+'회</span></div>'
+          +'<div class="bbg"><div class="bfill" style="width:'+Math.round(r[1]/mx*100)+'%;background:'+bc(r[1],mx)+'"></div></div></div>';
+      }).join('')
+    :'<div style="color:#8a7fa8;font-size:13px">기록이 없습니다.</div>';
+}
+function brow(n,v,d,m){
+  return '<div class="bwrap"><div class="brow"><span>'+xe(n)+'</span><span style="color:#8a7fa8">'+v+' / '+d+'회</span></div>'
+    +'<div class="bbg"><div class="bfill" style="width:'+Math.round(v/d*100)+'%;background:'+bc(v,m)+'"></div></div></div>';
+}
+
+/* ── 검색 ── */
+function drawSearch(){
+  var q=document.getElementById('sinput').value.trim();
+  var ce=document.getElementById('scnt'), ee=document.getElementById('sempty'), b=document.getElementById('sbox');
+  if(!q){ ce.style.display='none'; ee.style.display='block'; b.innerHTML=''; return; }
+  var lq=q.toLowerCase();
+  var rs=DB.filter(function(m){
+    var pts=[m.date,fd(m.date),m.event||'',m.note||''];
+    (m.members||[]).forEach(function(p){ pts.push(p.name||'',p.sharing||'',p.prayer||''); });
+    return pts.join(' ').toLowerCase().indexOf(lq)>=0;
+  });
+  ee.style.display='none'; ce.style.display='block';
+  ce.textContent='"'+q+'" 검색 결과: '+rs.length+'건';
+  b.innerHTML=rs.length?rs.map(function(m){ return mkCard(m,q); }).join('')
+    :'<div style="text-align:center;color:#8a7fa8;margin-top:30px;font-size:14px">검색 결과가 없습니다.</div>';
+}
+
+/* ── CSV 내보내기 ── */
+function doExport(){
+  if(!DB.length){ alert('내보낼 데이터가 없습니다.'); return; }
+  var rows=[['날짜','장소','이름','나눔내용','기도제목','행사일정','기타사항']];
+  DB.forEach(function(m){
+    var ms=(m.members&&m.members.length)?m.members:[{name:'',sharing:'',prayer:''}];
+    ms.forEach(function(p,i){
+      rows.push([
+        i===0?(m.date||''):'',
+        i===0?(m.place||''):'',
+        p.name||'', p.sharing||'', p.prayer||'',
+        i===0?(m.event||''):'',
+        i===0?(m.note||''):''
+      ]);
+    });
+  });
+  var csv='\uFEFF'+rows.map(function(r){
+    return r.map(function(c){ return '"'+String(c).replace(/"/g,'""')+'"'; }).join(',');
+  }).join('\r\n');
+  var fname=CFG.title.replace(/\s/g,'')+'_'+new Date().toISOString().substr(0,10)+'.csv';
+
+  if(navigator.share && navigator.canShare){
+    var blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
+    var file=new File([blob],fname,{type:'text/csv'});
+    if(navigator.canShare({files:[file]})){
+      navigator.share({files:[file],title:fname})
+        .then(function(){ setBtnOk('bexp','📤 내보내기'); })
+        .catch(function(e){ if(e.name!=='AbortError') fallbackExport(csv,fname); });
+      return;
+    }
+  }
+  fallbackExport(csv,fname);
+}
+function fallbackExport(csv,fname){
+  try{
+    var blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
+    var url=URL.createObjectURL(blob);
+    var win=window.open(url,'_blank');
+    if(win){ setBtnOk('bexp','📤 내보내기'); setTimeout(function(){ URL.revokeObjectURL(url); },60000); showTip(); return; }
+  }catch(e){}
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(csv).then(function(){
+      alert('CSV 데이터가 클립보드에 복사되었습니다.\n메모 앱 등에 붙여넣기 하세요.');
+      setBtnOk('bexp','📤 내보내기');
+    }).catch(function(){ alert('내보내기 실패. Safari 최신 버전을 사용해주세요.'); });
+  } else {
+    alert('이 기기에서는 자동 저장이 지원되지 않습니다.\nSafari 공유 버튼(□↑)을 이용해주세요.');
+  }
+}
+function showTip(){
+  var el=document.getElementById('ios-share-tip');
+  el.style.display='block';
+  setTimeout(function(){ el.style.display='none'; },4000);
+}
+function setBtnOk(id,original){
+  var btn=document.getElementById(id);
+  btn.textContent='✅ 완료!';
+  setTimeout(function(){ btn.textContent=original; },2500);
+}
+
+/* ── CSV 가져오기 ── */
+function doImport(){
+  document.getElementById('csv-label').click();
+}
+function onFileChosen(input){
+  var file=input.files&&input.files[0];
+  if(!file){ return; }
+  var reader=new FileReader();
+  reader.onload=function(ev){ var raw=ev.target.result||''; processCsv(raw); input.value=''; };
+  reader.onerror=function(){ alert('파일을 읽는 중 오류가 발생했습니다.'); };
+  reader.readAsText(file,'UTF-8');
+}
+function processCsv(raw){
+  try{
+    if(raw.charCodeAt(0)===0xFEFF) raw=raw.slice(1);
+    var lines=raw.replace(/\r\n/g,'\n').replace(/\r/g,'\n').split('\n');
+    var rows=[];
+    for(var i=0;i<lines.length;i++){ if(lines[i].trim()) rows.push(lines[i]); }
+    if(rows.length<2){ alert('데이터가 없습니다.'); return; }
+    function pr(line){
+      var out=[],cur='',q=false;
+      for(var i=0;i<line.length;i++){
+        var ch=line[i];
+        if(ch==='"'){ if(q&&line[i+1]==='"'){ cur+='"'; i++; } else q=!q; }
+        else if(ch===','&&!q){ out.push(cur); cur=''; }
+        else cur+=ch;
+      }
+      out.push(cur); return out;
+    }
+    var hdr=pr(rows[0]);
+    var iD=hdr.indexOf('날짜'), iP=hdr.indexOf('장소'), iN=hdr.indexOf('이름');
+    var iS=hdr.indexOf('나눔내용'), iR=hdr.indexOf('기도제목');
+    var iE=hdr.indexOf('행사일정'), iO=hdr.indexOf('기타사항');
+    if(iD<0||iN<0){ alert('CSV 형식이 올바르지 않습니다.\n이 앱에서 내보낸 파일을 사용해주세요.'); return; }
+    var map={}, ord=[];
+    for(var i=1;i<rows.length;i++){
+      var c=pr(rows[i]);
+      var date=iD>=0?(c[iD]||''):'', place=iP>=0?(c[iP]||''):'';
+      var name=iN>=0?(c[iN]||''):'', shar=iS>=0?(c[iS]||''):'';
+      var pray=iR>=0?(c[iR]||''):'', evt=iE>=0?(c[iE]||''):'', note=iO>=0?(c[iO]||''):'';
+      if(date){
+        var key=date+'|'+(place||'');
+        if(!map[key]){ map[key]={id:uid(),date:date,place:place,members:[],event:evt,note:note}; ord.push(key); }
+      }
+      var ak=ord[ord.length-1];
+      if(ak&&name) map[ak].members.push({name:name,sharing:shar,prayer:pray});
+    }
+    var imp=ord.map(function(k){ return map[k]; }).filter(function(r){ return r.date; });
+    if(!imp.length){ alert('가져올 데이터가 없습니다.'); return; }
+    var ex={};
+    DB.forEach(function(m){ ex[m.date+'|'+(m.place||'')]=true; });
+    var nr=imp.filter(function(r){ return !ex[r.date+'|'+(r.place||'')]; });
+    var dup=imp.length-nr.length;
+    DB=nr.concat(DB);
+    DB.sort(function(a,b){ return b.date.localeCompare(a.date); });
+    save2();
+    var msg='✅ '+nr.length+'개 회의록을 가져왔습니다.';
+    if(dup>0) msg+='\n(중복 '+dup+'개 건너뜀)';
+    alert(msg);
+    setBtnOk('bimp','📥 가져오기');
+    go('list');
+  }catch(err){ alert('파일 처리 오류: '+err.message); }
+}
+
+/* ── 초기화 ── */
+load();
+loadCfg();
+drawHome();
+</script>
+</body>
+</html>
